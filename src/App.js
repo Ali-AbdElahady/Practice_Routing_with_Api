@@ -2,12 +2,13 @@
 
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import HomePage from "./pasges/Home";
-import EventPage from "./pasges/Events";
+import EventPage, { loader as loaderEvent } from "./pasges/Events";
 import EventDetailPage from "./pasges/EventDetail";
 import NewEventPage from "./pasges/NewEvent";
 import EditEventPage from "./pasges/EditEvent";
 import RootLayout from "./pasges/Root";
 import EventsRootLayout from "./pasges/EventsRoot";
+import ErrorPage from "./pasges/Error";
 
 // 1. Add five new (dummy) page components (content can be simple <h1> elements)
 //    - HomePage
@@ -31,31 +32,31 @@ import EventsRootLayout from "./pasges/EventsRoot";
 
 const router = createBrowserRouter([
   {
-    path: '/', element: <RootLayout />, children: [
+    path: "/",
+    element: <RootLayout />,
+    errorElement: <ErrorPage />,
+    children: [
       { index: true, element: <HomePage /> },
       {
-        path: 'events', element: <EventsRootLayout />, children: [
-          { index: true, element: <EventPage /> ,loader: async () => {
-            const response = await fetch('http://localhost:8080/events');
-
-            if (!response.ok) {
-                // setError('Fetching events failed.');
-            } else {
-                const resData = await response.json();
-                return resData.events
-            }
-          } },
-          { path: ':eventId', element: <EventDetailPage /> },
-          { path: 'new', element: <NewEventPage /> },
-          { path: ':eventId/edit', element: <EditEventPage /> },
-        ]
+        path: "events",
+        element: <EventsRootLayout />,
+        children: [
+          {
+            index: true,
+            element: <EventPage />,
+            loader: loaderEvent,
+          },
+          { path: ":eventId", element: <EventDetailPage /> },
+          { path: "new", element: <NewEventPage /> },
+          { path: ":eventId/edit", element: <EditEventPage /> },
+        ],
       },
-    ]
+    ],
   },
-])
+]);
 
 function App() {
-  return <RouterProvider router={router} ></RouterProvider>;
+  return <RouterProvider router={router}></RouterProvider>;
 }
 
 export default App;
