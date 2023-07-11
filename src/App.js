@@ -3,8 +3,10 @@
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import HomePage from "./pasges/Home";
 import EventPage, { loader as loaderEvent } from "./pasges/Events";
-import EventDetailPage from "./pasges/EventDetail";
-import NewEventPage from "./pasges/NewEvent";
+import EventDetailPage, {
+  loader as eventDetailLoader,
+} from "./pasges/EventDetail";
+import NewEventPage, { action as newEventAction } from "./pasges/NewEvent";
 import EditEventPage from "./pasges/EditEvent";
 import RootLayout from "./pasges/Root";
 import EventsRootLayout from "./pasges/EventsRoot";
@@ -46,9 +48,19 @@ const router = createBrowserRouter([
             element: <EventPage />,
             loader: loaderEvent,
           },
-          { path: ":eventId", element: <EventDetailPage /> },
-          { path: "new", element: <NewEventPage /> },
-          { path: ":eventId/edit", element: <EditEventPage /> },
+          {
+            path: ":eventId",
+            loader: eventDetailLoader,
+            id: "event-detail",
+            children: [
+              {
+                index: true,
+                element: <EventDetailPage />,
+              },
+              { path: ":edit", element: <EditEventPage /> },
+            ],
+          },
+          { path: "new", element: <NewEventPage />, action: newEventAction },
         ],
       },
     ],
