@@ -1,4 +1,4 @@
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect } from "react";
 
 import EventsList from "../components/EventsList";
 import { Await, defer, json, useLoaderData } from "react-router-dom";
@@ -14,12 +14,10 @@ import { Await, defer, json, useLoaderData } from "react-router-dom";
 
 function EventsPage() {
   const { event } = useLoaderData();
-  useEffect(()=>{console.log(event);},[event])
   return (
     <Suspense fallback={<p style={{ textAlign: "center" }}>Loading...</p>}>
       <Await resolve={event}>
         {(loadedEvents) => {
-        console.log(loadEvents);
          return <EventsList events={loadedEvents} />}}
       </Await>
     </Suspense>
@@ -50,9 +48,9 @@ async function loadEvents() {
   if (!response.ok) {
     throw json({ message: "Could not fetch data" }, { status: 500 });
   } else {
-    const { event } = await response.json();
+    const { events } = await response.json();
     console.log("sdvsvaskljvlkasn sj jas a oasnlnal");
-    return event;
+    return events;
   }
 }
 
